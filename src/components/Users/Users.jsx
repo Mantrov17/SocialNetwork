@@ -1,25 +1,37 @@
+import React from 'react';
 import styles from "./Users.module.css";
-import axios from "axios";
 import userPhoto from "../../assets/images/user-icon.png";
-import { Component } from "react";
 
-class Users extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+let Users = (props) => {
 
-  componentDidMount() {
-    axios
-      .get("https://social-network.samuraijs.com/api/1.0/users")
-      .then((response) => {
-        this.props.setUsers(response.data.items);
-      });
-  }
+    let pagesCount = Math.ceil(
+      props.totalUsersCount / props.pageSize,
+    );
 
-  render() {
-    return (
-      <div>
-        {this.props.users.map((user) => {
+    let pages = [];
+    for (let i = 1; i <= pagesCount; i++) {
+      pages.push(i);
+    }
+
+  return (
+  <div>
+        <div>
+          {pages.map((page) => {
+            return (
+              <span
+                className={
+                  props.currentPage === page && styles.selectedPage
+                }
+                onClick={(e) => {
+                  props.onPageChanged(page);
+                }}
+              >
+                {page}
+              </span>
+            );
+          })}
+        </div>
+        {props.users.map((user) => {
           return (
             <div key={user.id}>
               <span>
@@ -35,7 +47,7 @@ class Users extends Component {
                   {user.followed ? (
                     <button
                       onClick={() => {
-                        this.props.unfollow(user.id);
+                        props.unfollow(user.id);
                       }}
                     >
                       Unfollow
@@ -43,7 +55,7 @@ class Users extends Component {
                   ) : (
                     <button
                       onClick={() => {
-                        this.props.follow(user.id);
+                        props.follow(user.id);
                       }}
                     >
                       Follow
@@ -65,8 +77,7 @@ class Users extends Component {
           );
         })}
       </div>
-    );
+  )
   }
-}
 
 export default Users;
